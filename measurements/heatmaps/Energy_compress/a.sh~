@@ -1,0 +1,45 @@
+#!/bin/bash
+for f in nanozip_*.png
+do
+	mv $f nanozip/
+done
+for f in *energy_decompress.png
+do
+	mv $f Energy_decompress/
+done
+for f in *memory_compress.png
+do
+	mv $f Memory_compress/
+done
+for f in *memory_decompress.png
+do
+	mv $f Memory_decompress/
+done
+for f in *power_compress.png
+do
+	mv $f Power_compress/
+done
+for f in *power_decompress.png
+do
+	mv $f Power_decompress/
+done
+for f in *ratio_compress.png
+do
+	mv $f Ratio_compress/
+done
+for f in *ratio_time_compress.png
+do
+	mv $f Ratio_time_compress/
+done
+for f in *size_compress.png
+do
+	mv $f Size_compress/
+done
+for f in *time_compress.png
+do
+	mv $f Time_compress/
+done
+for f in *time_decompress.png
+do
+	mv $f Time_decompress/
+done

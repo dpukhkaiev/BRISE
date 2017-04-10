@@ -1,0 +1,98 @@
+zips <- data.frame(1:960)
+for(algo in c("SHA2","Whirlpool")) {
+for(size in c("enwik4")) {
+
+filename <- paste(size,"-",algo,sep="")
+filename <- paste(filename,".csv",sep="")
+p <- data.frame()
+data <- read.csv(filename,sep=",",dec=".")
+#for(datatype in c("app4","cr_audio1.flac","cd_audio1.wav","enwik8","enwik9","game1")) {
+d1 <- subset(data)
+for(nt in c(1,2,4,8,16,32)) {
+  d2 <- subset(d1,d1$TR==nt)
+  for(f in c(1200,1300,1400,1600,1700,1800,1900,2000,2200,2300,2400,2500,2700,2800,2900,2901)) {#
+    d3 <- subset(d2,d2$FR==f)
+    sd <- sd(d3$EN)
+    m <- max(d3$EN)
+    p <- rbind(p,c(sd,m))
+  }
+}
+#}
+colnames(p) <- c("sd","max")
+rel <- p$sd/p$max
+rel <- rel[!is.na(rel)]
+zips <- cbind(zips,rel)
+l <- length(colnames(zips))
+colnames(zips)[l] <- filename
+}
+}
+for(algo in c("AES")) {
+for(size in c("enwik9","app4-tar","game1-tar")) {
+
+filename <- paste(size,"-",algo,sep="")
+filename <- paste(filename,"_","encrypt",sep="")
+filename <- paste(filename,".csv",sep="")
+p <- data.frame()
+data <- read.csv(filename,sep=",",dec=".")
+#for(datatype in c("app4","cr_audio1.flac","cd_audio1.wav","enwik8","enwik9","game1")) {
+d1 <- subset(data)
+for(nt in c(1,2,4,8,16,32)) {
+  d2 <- subset(d1,d1$TR==nt)
+  for(f in c(1200,1300,1400,1600,1700,1800,1900,2000,2200,2300,2400,2500,2700,2800,2900,2901)) {#
+    d3 <- subset(d2,d2$FR==f)
+    sd <- sd(d3$EN)
+    m <- max(d3$EN)
+    p <- rbind(p,c(sd,m))
+  }
+}
+#}
+colnames(p) <- c("sd","max")
+rel <- p$sd/p$max
+rel <- rel[!is.na(rel)]
+zips <- cbind(zips,rel)
+l <- length(colnames(zips))
+colnames(zips)[l] <- filename
+}
+}
+
+for(algo in c("3DES")) {
+for(size in c("enwik9","app4-tar","game1-tar")) {
+for(action in c("encrypt","decrypt")){
+filename <- paste(size,"-",algo,sep="")
+filename <- paste(filename,"_",action,sep="")
+filename <- paste(filename,".csv",sep="")
+p <- data.frame()
+data <- read.csv(filename,sep=",",dec=".")
+#for(datatype in c("app4","cr_audio1.flac","cd_audio1.wav","enwik8","enwik9","game1")) {
+d1 <- subset(data)
+for(nt in c(1,2,4,8,16,32)) {
+  d2 <- subset(d1,d1$TR==nt)
+  for(f in c(1200,1300,1400,1600,1700,1800,1900,2000,2200,2300,2400,2500,2700,2800,2900,2901)) {#
+    d3 <- subset(d2,d2$FR==f)
+    sd <- sd(d3$EN)
+    m <- max(d3$EN)
+    p <- rbind(p,c(sd,m))
+  }
+}
+}
+#}
+colnames(p) <- c("sd","max")
+rel <- p$sd/p$max
+rel <- rel[!is.na(rel)]
+zips <- cbind(zips,rel)
+l <- length(colnames(zips))
+colnames(zips)[l] <- filename
+}
+}
+
+pdf("summary.pdf",width=15,height=10)
+par(mar=c(3,14,3,3))
+boxplot(zips[,-1],ylim=c(0,1),horizontal=TRUE,las=1)
+title("Standard Deviation / Maximum Energy Consumption [%]")
+dev.off()
+
+pdf("summary-bar.pdf",width=15,height=10)
+par(mar=c(3,14,3,3))
+barplot(sapply(zips[,-1],FUN=median),horiz=TRUE,las=1,xlim=c(0,1))
+title("Standard Deviation / Maximum Energy Consumption [%]")
+dev.off()

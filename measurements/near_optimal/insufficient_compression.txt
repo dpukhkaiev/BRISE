@@ -1,0 +1,2 @@
+pigz_decompress.csv flac
+nanozip_50_compress.csv enw8
