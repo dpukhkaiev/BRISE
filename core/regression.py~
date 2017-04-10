@@ -1,0 +1,176 @@
+__author__ = 'dmitrii'
+
+import sys
+import re
+import csv
+from sklearn import cross_validation
+from sklearn.linear_model import LinearRegression, Ridge
+from tools.format import featureFormat, targetFeatureSplit
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.pipeline import Pipeline
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+
+class Regression:
+    dict = []
+    features_list = ["EN", "TR", "FR"]
+    test_color = "r"
+    train_color = "b"
+    features = []
+    def __init__(self, file_name, max_power=2):
+        with open(file_name, 'r') as csv_file:
+            reader = csv.DictReader(csv_file)
+            for row in reader:
+                self.dict.append(row)
+
+        data = featureFormat(self.dict, self.features_list)
+        target, features = targetFeatureSplit( data )
+        # self.features.append(feature1)
+        # self.features.append(feature2)
+        # from panda
+
+        self.feature_train, self.feature_test, self.target_train, self.target_test = \
+            cross_validation.train_test_split(features, target)
+
+        return
+
+
+    def regression(self):
+        # reg = {}
+        #poly = PolynomialFeatures()
+        # poly.fit_transform(self.feature_train, self.target_train)
+        # hardcoderange = ["TR", "FR"]
+        # for i in xrange(1):
+        #     print i
+        #     reg['%d' % i] = LinearRegression()
+        #     reg['%d' % i].fit(self.features[i], self.target)#reg.fit(self.feature_train, self.target_train)
+        # pred = reg.predict(self.feature_test)
+#        reg = LinearRegression()
+#        reg.fit(self.feature_train, self.target_train)
+
+        #print reg.predict(self.feature_test)
+
+#        print reg.score(self.feature_test, self.target_test)
+#        print reg.coef_
+#        print reg.intercept_
+        #print self.feature_train
+        #print self.feature_train
+
+        degree = 6
+        model = Pipeline([('poly', PolynomialFeatures(degree=degree, interaction_only=False)), ('reg',Ridge())])
+        #X = model.named_steps['poly'].fit_transform(self.feature_train)
+        #Y = model.named_steps['poly'].fit_transform(self.target_train)
+        #print len(X)
+        #print len(self.target_train)
+        model.fit(self.feature_train, self.target_train)
+        for i in xrange(degree+1):
+            if i == 0:
+                print model.named_steps['reg'].coef_[i]
+            else:
+                for j in xrange(i+1):
+                    print "(TR ^ " + str(i - j) + ") * (FR ^ " + str(j) + ") = " + \
+                          str(model.named_steps['reg'].coef_[self.sum_fact(i)+j])
+
+        #print model.named_steps['reg'].coef_
+        print "R^2 = " + str(model.score(self.feature_test, self.target_test))
+        print "Intercept = " + str(model.named_steps['reg'].intercept_)
+        #print len (model.named_steps['reg'].coef_)
+        #pred = model.predict(self.feature_test)
+
+        # print reg.coef_
+        # print reg.intercept_
+        # print reg.score(self.feature_test, self.target_test)
+        # self.draw(reg)
+        #self.draw(model.named_steps['reg'])
+
+        self.draw3D(model)
+
+
+        # smaller_frame =
+
+
+    def draw3D(self, model):
+        import matplotlib.pyplot as plt
+        from matplotlib.ticker import LinearLocator, FormatStrFormatter
+        from matplotlib import cm
+        #reg = model.named_steps['reg']
+        fig = plt.figure(1)
+        ax = fig.add_subplot(111, projection="3d")
+        for xs, zs in zip(self.feature_train, self.target_train):
+            ax.scatter(xs[0], xs[1], zs, c='b', label="train")
+
+        for xs, zs in zip(self.feature_test, self.target_test):
+            ax.scatter(xs[0], xs[1], zs, c='r' , label="test")
+        #ax.scatter(self.target_test, self.feature_test[0], self.feature_test[1], self, c = 'r')
+        ax.set_xlabel('Number of threads')
+        ax.set_ylabel('Frequency')
+        ax.set_zlabel('Energy')
+
+        try:
+            #fig = plt.figure(2)
+            #bx = fig.gca(projection="3d")
+            x = []
+            y = []
+            z = []
+            # y = np.empty(len(self.feature_train))
+            # z = np.empty(len(model.predict(self.feature_test)))
+            #z_plot = reg.predict()
+            for xs, zs in zip(self.feature_train, model.predict(self.feature_test)):
+                #bx.plot_trisurf(xs[0], xs[1], zs)
+                x.append(xs[0])
+                y.append(xs[1])
+                z.append(zs)
+            # X, Y = np.meshgrid(np.array(x), np.array(y))
+            # Z = np.array(z)
+            # print X.shape
+            # print Z.shape
+            # Z = Z.reshape(X.shape)
+            #Z = np.meshgrid(np.array(z))
+            #print Z
+
+
+            #comment mot to plot regression surface
+             surf = ax.plot_trisurf(x, y, z, cmap=cm.coolwarm, linewidth=1)
+             ax.zaxis.set_major_locator(LinearLocator(10))
+             ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+             fig.colorbar(surf, shrink=0.5, aspect=5)
+
+
+
+            #plt.plot( self.feature_test[], reg.predict(self.feature_test) )
+        except NameError:
+            pass
+
+       #a plt.legend()
+        plt.show()
+        return
+
+    def draw(self, reg):
+        import matplotlib.pyplot as plt
+        for feature, target in zip(self.feature_test, self.target_test):
+            plt.scatter( feature, target, color=self.test_color )
+        for feature, target in zip(self.feature_train, self.target_train):
+            plt.scatter( feature, target, color=self.train_color )
+
+        ### labels for the legend
+        plt.scatter(self.feature_test[0], self.target_test[0], color=self.test_color, label="test")
+        plt.scatter(self.feature_test[0], self.target_test[0], color=self.train_color, label="train")
+
+
+
+
+        ### draw the regression line, once it's coded
+        try:
+            plt.plot( self.feature_test, reg.predict(self.feature_test) )
+        except NameError:
+            pass
+        reg.fit(self.feature_test, self.target_test)
+        plt.plot(self.feature_train, reg.predict(self.feature_train), color="r")
+        print reg.coef_
+        plt.xlabel(self.features_list[1])
+        plt.ylabel(self.features_list[0])
+        plt.legend()
+        plt.show()
+
+
+    def sum_fact(self, num): return reduce(lambda x,y: x+y, range(1 ,num + 1))
