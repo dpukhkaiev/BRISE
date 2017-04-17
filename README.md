@@ -1,6 +1,8 @@
 # BRISE
 Benchmark Reduction via Adaptive Instance Selection
 
+See measurements directory for benchmarking results.
+
 Usage:
 python start.py FILENAME DATA_TYPE CONFIGS_START_COUNT DELTA MAX_CONFIGS_COUNT
 
