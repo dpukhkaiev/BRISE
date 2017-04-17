@@ -92,60 +92,31 @@ class Indices:
         picked_features.pop()
         picked_features.append(tuple(all_features[6-1][15-1]))
 
-        picked_coords = []
-        for pf in picked_features:
+        # picked_coords = []
+        # for pf in picked_features:
             # for i, row in enumerate(all_features):
             #     try:
             #         picked_coords.append(tuple([i+1, row.index(pf)+1]))
             #     except:
             #         continue
-            picked_coords.append(tuple(list([int(pf[0])+1,int(pf[1])+1])))
-        print picked_features
-        print picked_coords
-        print "\\begin{table}[]"
-        print "\centering"
-        print "\caption{Sobol " + str(data_amount) + "}"
-        print "\label{tab:sobol_"  + str(data_amount) + "}"
-        print "\\begin{tabular}"
-        print "{" + "|c" * 5 + "|c|" + "}"
-        print "\\hline"
-        for fr in range(16,0,-1):
-            for tr in range(1, 7, 1):
-                if tr != 6:
-                    if picked_coords.__contains__(tuple([tr,fr])):
-                        stdout.write(" - &")
-                    else:
-                        stdout.write(" &")
-                else:
-                    if picked_coords.__contains__(tuple([tr, fr])):
-                        stdout.write(" -")
-                    else:
-                        stdout.write(" ")
-            stdout.write("\\\\ \\hline\n")
-        print "\\end{tabular}"
-        print "\end{table}"
-        #for pc in picked_coords:
-
-        #print "\\xe"
-        exit(0)
-
-
-        # coordinates = []
-        # tr_list = [i for i in range(1,7,1)]
-        # fr_list = [i for i in range(1,17,1)]
-        # for tr in tr_list:
-        #     for fr in fr_list:
-        #         coordinates.append([tr,fr])
-        # points = [geopy.Point(p[0],p[1]) for p in coordinates]
-        # picked_coords = []
-        # for pf in picked_features:
-        #     pf = geopy.Point(pf[0],pf[1])
-        #     all_distances = [(p,geopy.distance.distance(p,pf).km) for p in points]
-        #     i = 0
-        #     while picked_coords.__contains__(sorted(all_distances, key=lambda x: (x[1]))[i][0]):
-        #         i+=1
-        #     picked_coords.append(sorted(all_distances, key=lambda d: (d[1]))[i][0])
-        # print picked_features
+        #    picked_coords.append(tuple(list([int(pf[0])+1,int(pf[1])+1])))
+        
+        coordinates = []
+        tr_list = [i for i in range(1,7,1)]
+        fr_list = [i for i in range(1,17,1)]
+        for tr in tr_list:
+            for fr in fr_list:
+                coordinates.append([tr,fr])
+        points = [geopy.Point(p[0],p[1]) for p in coordinates]
+        picked_coords = []
+        for pf in picked_features:
+            pf = geopy.Point(pf[0],pf[1])
+            all_distances = [(p,geopy.distance.distance(p,pf).km) for p in points]
+            i = 0
+            while picked_coords.__contains__(sorted(all_distances, key=lambda x: (x[1]))[i][0]):
+                i+=1
+            picked_coords.append(sorted(all_distances, key=lambda d: (d[1]))[i][0])
+        #print picked_features
         # exit()
         picked_features = []
         freqs = [1200., 1300., 1400., 1600., 1700., 1800., 1900., 2000., 2200., 2300., 2400., 2500., 2700., 2800.,
