@@ -3,4 +3,4 @@ Benchmark Reduction via Adaptive Instance Selection
 
 See [measurements](./measurements) directory for benchmarking results.
 
-See the new version at https://github.com/Valavanca/benchmark 
+# See the new version at https://github.com/dpukhkaiev/BRISE2
